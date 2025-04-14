@@ -1,0 +1,86 @@
+*{
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+}
+
+h3{
+  display: inline-block;
+  font-size: 16px;
+}
+span{
+  font-size: 17px;
+}
+
+
+@-webkit-keyframes scrollToUp {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 -250px;
+  }
+}
+@keyframes scrollToUp {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 -250px;
+  }
+}
+
+
+.main{
+  margin: 0px;
+  padding: 0px;
+  /* width: auto; */
+  height: 100vh;
+  background-image: url(./img/bg.jpg);
+  background-attachment: fixed;
+  background-position: center center;
+  -webkit-animation: scrollToUp 5s linear infinite;
+  animation: scrollToUp 5s linear infinite;
+  /* background-repeat: no-repeat; */
+}
+
+.main-native{
+  text-align: center;
+  position: relative;
+  top: 33vh;
+  z-index: 10;
+}
+
+/* .button-native{
+  text-align: center;
+  position: relative;
+  top: 53vh;
+} */
+
+Button{
+  background-color: #ff7e4e;
+  border: 10px solid;
+  border-color: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 10px;
+  margin: 5px;
+  font-size: large;
+  font-family: 'XiaoWei', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.floating-text {
+  position: absolute;
+  color: #000;
+  opacity: 0; /* 初始不可见 */
+  transition: opacity 2s; /* 添加渐入渐出过渡效果，持续1秒 */
+}
+
+.s-title{
+  font-size: 10vh;
+  color: #4682B4;
+}
+
+.what{
+  font-size: 10vh;
+  color: #FF7F50;
+}

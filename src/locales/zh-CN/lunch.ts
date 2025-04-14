@@ -1,0 +1,15 @@
+export default {
+  'lunch.main.what': '什么',
+  'lunch.main.caidan': '彩蛋',
+  'lunch.main.title': '今天中午吃',
+  'lunch.list.error': '列表里什么都没有哦！',
+  'lunch.list.showlist': '显示当前列表',
+  'lunch.btn.start': '吃什么呢？',
+  'lunch.component.console.iderr': '用户ID未定义，无法提交',
+  'lunch.component.console.commiterr': '提交失败',
+  'lunch.component.console.commitok': '提交成功',
+  'lunch.component.list.title': '当前列表长度：',
+  'lunch.component.list.submit': '提交',
+  'lunch.component.list.cancel': '取消',
+  'lunch.component.list.delete': '删除',
+};

@@ -1,0 +1,15 @@
+export default {
+  'lunch.main.what': 'what',
+  'lunch.main.caidan': 'caidan',
+  'lunch.main.title': 'Today\'s lunch',
+  'lunch.list.error': 'There is nothing in the list!',
+  'lunch.list.showlist': 'Show current list',
+  'lunch.btn.start': 'What to eat?',
+  'lunch.component.console.iderr': 'User ID not defined, unable to submit',
+  'lunch.component.console.commiterr': 'Submission failed',
+  'lunch.component.console.commitok': 'Submission successful',
+  'lunch.component.list.title': 'Current list length:',
+  'lunch.component.list.submit': 'Submit',
+  'lunch.component.list.cancel': 'Cancel',
+  'lunch.component.list.delete': 'Delete',
+};
