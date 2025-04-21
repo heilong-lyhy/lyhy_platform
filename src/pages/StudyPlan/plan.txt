@@ -1,0 +1,16 @@
+//仅用于记录开发过程中的构思
+# 1. 页面布局
+# 2. 页面功能
+https://ant-design.antgroup.com/components/calendar-cn
+https://procomponents.ant.design/components/editable-table
+# 3. 页面交互
+# 4. 页面数据
+首先确定数据库中所需要存放的数据类型
+计划表：
+计划拥有者（用户ID）、计划名称、计划内容、计划创建时间、计划状态、计划完成时间
+
+用户表：
+用户ID、用户名、账号、密码、邮箱、用户类型、用户标语
+
+
+# 5. 页面性能优化

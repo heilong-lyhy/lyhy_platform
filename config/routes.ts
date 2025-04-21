@@ -52,6 +52,12 @@ export default [
     component: './TableList',
   },
   {
+    name: 'StudyPlan',
+    icon: 'table',
+    path: '/studyplan',
+    component: './StudyPlan',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
