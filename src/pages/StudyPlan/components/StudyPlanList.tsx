@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Button } from 'antd';
+import { List, Button, Form, Input, Modal } from 'antd';
 import StudyPlanTable from './StudyPlanTable';
 import dayjs from 'dayjs';
 import './StudyPlanList.less';
@@ -48,16 +48,68 @@ const StudyPlanList: React.FC = () => {
     }
   ]);
 
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [newPlanVisible, setNewPlanVisible] = React.useState(false);
+  const [form] = Form.useForm();
+  
+  const handleCreate = (values: any) => {
+    const newPlan = {
+      id: Math.max(...mainPlans.map(p => p.id)) + 1,
+      title: values.title,
+      description: values.description,
+      createdAt: dayjs(),
+      deadline: dayjs().add(30, 'day'),
+      subItems: []
+    };
+    setMainPlans([...mainPlans, newPlan]);
+    setNewPlanVisible(false);
+    form.resetFields();
+  };
+  
+  const handleDelete = (planId: number) => {
+    setMainPlans(mainPlans.filter(p => p.id !== planId));
+  };
+
   return (
     <div className="main-plan-list">
       <Button 
         type="primary" 
         style={{ marginBottom: 16 }}
-        onClick={() => console.log('进入编辑模式')}
+        onClick={() => setIsEditMode(!isEditMode)}
       >
-        编辑所有计划
+        {isEditMode ? '退出编辑' : '编辑所有计划'}
       </Button>
-
+      {isEditMode && (
+        <Button
+          type="primary"
+          onClick={() => setNewPlanVisible(true)}
+        >
+          新建计划
+        </Button>
+      )}
+      <Modal
+        title="新建学习计划" 
+        visible={newPlanVisible}
+        onCancel={() => setNewPlanVisible(false)}
+        onOk={() => form.submit()}
+      >
+        <Form form={form} onFinish={handleCreate}>
+          <Form.Item
+            label="计划标题"
+            name="title"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="计划描述"
+            name="description"
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea />
+          </Form.Item>
+        </Form>
+      </Modal>
       <List
         itemLayout="vertical"
         dataSource={mainPlans}
@@ -68,6 +120,21 @@ const StudyPlanList: React.FC = () => {
               <div style={{ minWidth: 120 }}>
                 <p>创建时间: {plan.createdAt.format('YYYY-MM-DD')}</p>
                 <p>截止时间: {plan.deadline.format('YYYY-MM-DD')}</p>
+                {isEditMode && (
+                  <Button
+                    danger
+                    style={{ marginTop: 8 }}
+                    onClick={() => {
+                      Modal.confirm({
+                        title: '确认删除',
+                        content: '确定要删除该学习计划吗？',
+                        onOk: () => handleDelete(plan.id)
+                      });
+                    }}
+                  >
+                    删除
+                  </Button>
+                )}
               </div>
             }
           >
@@ -84,8 +151,13 @@ const StudyPlanList: React.FC = () => {
           </List.Item>
         )}
       />
+      <span>一条标语罢了</span>
     </div>
   );
 };
+
+
+
+
 
 export default StudyPlanList;

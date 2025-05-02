@@ -70,7 +70,7 @@ const StudyPlanTable: React.FC = () => {
 
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '活动名称',
+      title: '计划名',
       dataIndex: 'title',
       tooltip: '只读，使用form.getFieldValue获取不到值',
       formItemProps: (form, { rowIndex }) => {
@@ -85,15 +85,9 @@ const StudyPlanTable: React.FC = () => {
       },
       width: '15%',
     },
+
     {
-      title: '活动名称二',
-      dataIndex: 'readonly',
-      tooltip: '只读，使用form.getFieldValue可以获取到值',
-      readonly: true,
-      width: '15%',
-    },
-    {
-      title: '状态',
+      title: '完成状态',
       key: 'state',
       dataIndex: 'state',
       valueType: 'select',
@@ -111,6 +105,7 @@ const StudyPlanTable: React.FC = () => {
     },
     {
       title: '描述',
+      width: '30%',
       dataIndex: 'decs',
       fieldProps: (form, { rowKey, rowIndex }) => {
         if (form.getFieldValue([rowKey || '', 'title']) === '不好玩') {
@@ -127,7 +122,7 @@ const StudyPlanTable: React.FC = () => {
       },
     },
     {
-      title: '活动时间',
+      title: '预期结束时间',
       dataIndex: 'created_at',
       valueType: 'date',
     },
@@ -159,10 +154,10 @@ const StudyPlanTable: React.FC = () => {
   return (
     <>
       <Button type="primary" onClick={showModal}>
-        打开表格
+        查看详情
       </Button>
       <Modal
-        title="可编辑表格"
+        title="学习计划日程表"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -178,7 +173,7 @@ const StudyPlanTable: React.FC = () => {
       >
         <EditableProTable<DataSourceType>
           rowKey="id"
-          headerTitle="可编辑表格"
+          headerTitle="在这编辑你的具体计划吧"
           maxLength={5}
           scroll={{
             x: 960,
@@ -235,7 +230,7 @@ const StudyPlanTable: React.FC = () => {
             onChange: setEditableRowKeys,
           }}
         />
-        <ProCard title="表格数据" headerBordered collapsible defaultCollapsed>
+        {/* <ProCard title="表格数据" headerBordered collapsible defaultCollapsed>
           <ProFormField
             ignoreFormItem
             fieldProps={{
@@ -247,10 +242,10 @@ const StudyPlanTable: React.FC = () => {
             valueType="jsonCode"
             text={JSON.stringify(dataSource)}
           />
-        </ProCard>
+        </ProCard> */}
       </Modal>
     </>
   );
 };
-
+//以上内容为表格数据展示，实际使用中可以不展示
 export default StudyPlanTable;
