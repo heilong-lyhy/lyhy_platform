@@ -1,9 +1,11 @@
 import React from 'react';
-import { List, Button, Form, Input, Modal } from 'antd';
+import { List, Button, Form, Input, Modal,DatePicker } from 'antd';
 import StudyPlanTable from './StudyPlanTable';
 import dayjs from 'dayjs';
 import './StudyPlanList.less';
 
+
+const { RangePicker } = DatePicker;
 // 主计划数据结构
 interface MainPlan {
   id: number;
@@ -57,8 +59,8 @@ const StudyPlanList: React.FC = () => {
       id: Math.max(...mainPlans.map(p => p.id)) + 1,
       title: values.title,
       description: values.description,
-      createdAt: dayjs(),
-      deadline: dayjs().add(30, 'day'),
+      createdAt: dayjs(values.timeRange[0]),
+      deadline: dayjs(values.timeRange[1]),
       subItems: []
     };
     setMainPlans([...mainPlans, newPlan]);
@@ -108,6 +110,23 @@ const StudyPlanList: React.FC = () => {
           >
             <Input.TextArea />
           </Form.Item>
+          <Form.Item 
+            label="时间范围"
+            name="timeRange"
+            rules={[
+          { required: true, message: '请选择时间范围' },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || value[0].isAfter(value[1])) {
+                return Promise.reject(new Error('结束时间必须晚于开始时间'));
+              }
+              return Promise.resolve();
+            },
+          }),
+        ]}
+          >
+            <RangePicker showTime />
+          </Form.Item>
         </Form>
       </Modal>
       <List
@@ -151,7 +170,6 @@ const StudyPlanList: React.FC = () => {
           </List.Item>
         )}
       />
-      <span>一条标语罢了</span>
     </div>
   );
 };
