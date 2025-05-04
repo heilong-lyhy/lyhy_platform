@@ -8,16 +8,7 @@ import {
 import React, { useState } from 'react';
 import { Modal, Button } from 'antd';
 
-type DataSourceType = {
-  id: React.Key;
-  title?: string;
-  readonly?: string;
-  decs?: string;
-  state?: string;
-  created_at?: number;
-  update_at?: number;
-  children?: DataSourceType[];
-};
+
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -27,30 +18,36 @@ const waitTime = (time: number = 100) => {
   });
 };
 
-const defaultData: DataSourceType[] = [
-  {
-    id: 624748504,
-    title: '活动名称一',
-    readonly: '活动名称一',
-    decs: '这个活动真好玩',
-    state: 'open',
-    created_at: 1590486176000,
-    update_at: 1590486176000,
-  },
-  {
-    id: 624691229,
-    title: '活动名称二',
-    readonly: '活动名称二',
-    decs: '这个活动真好玩',
-    state: 'closed',
-    created_at: 1590481162000,
-    update_at: 1590481162000,
-  },
-];
+// const defaultData: DataSourceType[] = [
+//   {
+//     id: 624748504,
+//     title: '活动名称一',
+//     readonly: '活动名称一',
+//     decs: '这个活动真好玩',
+//     state: 'open',
+//     created_at: 1590486176000,
+//     update_at: 1590486176000,
+//   },
+//   {
+//     id: 624691229,
+//     title: '活动名称二',
+//     readonly: '活动名称二',
+//     decs: '这个活动真好玩',
+//     state: 'closed',
+//     created_at: 1590481162000,
+//     update_at: 1590481162000,
+//   },
+// ];
 
-const StudyPlanTable: React.FC = () => {
+
+
+interface TableProps {
+  items: SubItem[];
+  onSubItemChange: (newItems: SubItem[]) => void;
+}
+
+const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>(defaultData);
   const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
     'bottom',
   );
@@ -68,7 +65,7 @@ const StudyPlanTable: React.FC = () => {
     setIsModalVisible(false);
   };
 
-  const columns: ProColumns<DataSourceType>[] = [
+  const columns: ProColumns<SubItem>[] = [
     {
       title: '计划名',
       dataIndex: 'title',
@@ -81,23 +78,23 @@ const StudyPlanTable: React.FC = () => {
       },
       // 第一行不允许编辑
       editable: (text, record, index) => {
-        return index !== 0;
+        return index == 0;
       },
       width: '15%',
     },
 
     {
       title: '完成状态',
-      key: 'state',
-      dataIndex: 'state',
+      key: 'completed',
+      dataIndex: 'completed',
       valueType: 'select',
       valueEnum: {
         all: { text: '全部', status: 'Default' },
-        open: {
+        false: {
           text: '未解决',
           status: 'Error',
         },
-        closed: {
+        true: {
           text: '已解决',
           status: 'Success',
         },
@@ -106,7 +103,7 @@ const StudyPlanTable: React.FC = () => {
     {
       title: '描述',
       width: '30%',
-      dataIndex: 'decs',
+      dataIndex: 'description',
       fieldProps: (form, { rowKey, rowIndex }) => {
         if (form.getFieldValue([rowKey || '', 'title']) === '不好玩') {
           return {
@@ -123,7 +120,7 @@ const StudyPlanTable: React.FC = () => {
     },
     {
       title: '预期结束时间',
-      dataIndex: 'created_at',
+      dataIndex: 'createdAt',
       valueType: 'date',
     },
     {
@@ -142,7 +139,8 @@ const StudyPlanTable: React.FC = () => {
         <a
           key="delete"
           onClick={() => {
-            setDataSource(dataSource.filter((item) => item.id !== record.id));
+            const newItems = items.filter((item) => item.id !== record.id);
+            onSubItemChange(newItems);
           }}
         >
           删除
@@ -171,10 +169,12 @@ const StudyPlanTable: React.FC = () => {
           </Button>,
         ]}
       >
-        <EditableProTable<DataSourceType>
+        <EditableProTable<SubItem>
           rowKey="id"
           headerTitle="在这编辑你的具体计划吧"
           maxLength={5}
+          value={items}
+          onChange={(newItems) => onSubItemChange(newItems as SubItem[])}
           scroll={{
             x: 960,
           }}
@@ -212,14 +212,14 @@ const StudyPlanTable: React.FC = () => {
           ]}
           columns={columns}
           request={async () => ({
-            data: defaultData,
+            data: items,
             total: 3,
             success: true,
           })}
-          value={dataSource}
-          onChange={(value) => {
-            setDataSource([...value]); // 使用扩展运算符将只读数组转换为可变数组
-          }}
+          // value={items}
+          // onChange={(value) => {
+          //   setDataSource([...value]); // 使用扩展运算符将只读数组转换为可变数组
+          // }}
           editable={{
             type: 'multiple',
             editableKeys,

@@ -14,3 +14,11 @@ https://procomponents.ant.design/components/editable-table
 
 
 # 5. 页面性能优化
+
+
+
+已知bug：
+计划表中的当前任务能够实时修改了，但是新建计划时无法刷新新建的任务内容，该bug在连接数据库后进行修复
+
+未来优化内容：
+less和tsx的分离，当前大部分样式还嵌入在tsx文件中，后续应尝试使用ai进行分离至less文件。
