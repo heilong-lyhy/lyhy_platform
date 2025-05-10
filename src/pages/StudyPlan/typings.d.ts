@@ -1,6 +1,6 @@
 interface MainPlan {
-    id: number;
-    title: string;
+    planid: number;
+    plantitle: string;
     description: string;
     createdAt: dayjs.Dayjs;
     deadline: dayjs.Dayjs;
@@ -9,9 +9,8 @@ interface MainPlan {
   
   // 子项数据结构
   interface SubItem {
-    id: React.Key;
-    title?: string;
-    readonly?: string;
+    subid: React.Key;
+    subtitle?: string;
     description?: string;
     completed?: boolean;
     createdAt?: number;
@@ -21,4 +20,5 @@ interface MainPlan {
 
   interface TableProps {
     items: SubItem[];
+    onSubItemChange: (newItems: SubItem[]) => void;
   }

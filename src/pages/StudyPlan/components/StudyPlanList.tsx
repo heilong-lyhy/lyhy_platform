@@ -11,31 +11,29 @@ const { RangePicker } = DatePicker;
 const StudyPlanList: React.FC = () => {
   const handleSubItemChange = (planId: number, newSubItems: SubItem[]) => {
     setMainPlans(mainPlans.map(plan => 
-      plan.id === planId ? { ...plan, subItems: newSubItems } : plan
+      plan.planid === planId ? { ...plan, subItems: newSubItems } : plan
     ));
   };
   // 示例主计划数据
   const [mainPlans, setMainPlans] = React.useState<MainPlan[]>([
     {
-      id: 1,
-      title: "前端学习计划",
+      planid: 1,
+      plantitle: "前端学习计划",
       description: "掌握React和TypeScript开发",
       createdAt: dayjs(),
       deadline: dayjs().add(30, 'day'),
       subItems: [
         {
-          id: 624748504,
-          title: '活动名称一',
-          readonly: '活动名称一',
+          subid: 624748504,
+          subtitle: '活动名称一',
           description: '这个活动真好玩',
           completed: false,
           createdAt: 1590486176000,
           updatedAt: 1590486176000,
         },
         {
-          id: 624691229,
-          title: '活动名称二',
-          readonly: '活动名称二',
+          subid: 624691229,
+          subtitle: '活动名称二',
           description: '这个活动真好玩',
           completed: false,
           createdAt: 1590481162000,
@@ -44,25 +42,23 @@ const StudyPlanList: React.FC = () => {
       ]
     },
     {
-      id: 2,
-      title: "前端学习计划2",
+      planid: 2,
+      plantitle: "前端学习计划2",
       description: "掌握React和TypeScript开发",
       createdAt: dayjs(),
       deadline: dayjs().add(30, 'day'),
       subItems: [
         {
-          id: 624748504,
-          title: '活动名称一',
-          readonly: '活动名称一',
+          subid: 624748504,
+          subtitle: '活动名称一',
           description: '这个活动真好玩',
           completed: true,
           createdAt: 1590486176000,
           updatedAt: 1590486176000,
         },
         {
-          id: 624691229,
-          title: '活动名称二',
-          readonly: '活动名称二',
+          subid: 624691229,
+          subtitle: '活动名称二',
           description: '这个活动真好玩',
           completed: false,
           createdAt: 1590481162000,
@@ -102,8 +98,8 @@ const StudyPlanList: React.FC = () => {
   
   const handleCreate = (values: any) => {
     const newPlan = {
-      id: Math.max(...mainPlans.map(p => p.id)) + 1,
-      title: values.title,
+      planid: Math.max(...mainPlans.map(p => p.planid)) + 1,
+      plantitle: values.title,
       description: values.description,
       createdAt: dayjs(values.timeRange[0]),
       deadline: dayjs(values.timeRange[1]),
@@ -115,7 +111,7 @@ const StudyPlanList: React.FC = () => {
   };
   
   const handleDelete = (planId: number) => {
-    setMainPlans(mainPlans.filter(p => p.id !== planId));
+    setMainPlans(mainPlans.filter(p => p.planid !== planId));
   };
 
   return (
@@ -180,7 +176,7 @@ const StudyPlanList: React.FC = () => {
         dataSource={mainPlans}
         renderItem={plan => (
           <List.Item
-            key={plan.id}
+            key={plan.planid}
             extra={
               <div style={{ minWidth: 120 }}>
                 <p>创建时间: {plan.createdAt.format('YYYY-MM-DD')}</p>
@@ -193,7 +189,7 @@ const StudyPlanList: React.FC = () => {
                       Modal.confirm({
                         title: '确认删除',
                         content: '确定要删除该学习计划吗？',
-                        onOk: () => handleDelete(plan.id)
+                        onOk: () => handleDelete(plan.planid)
                       });
                     }}
                   >
@@ -204,7 +200,7 @@ const StudyPlanList: React.FC = () => {
             }
           >
             <List.Item.Meta
-              title={<h3>{plan.title}</h3>}
+              title={<h3>{plan.plantitle}</h3>}
               description={plan.description}
             />
             
@@ -216,7 +212,7 @@ const StudyPlanList: React.FC = () => {
             {/* 嵌套子项表格 */}
             <StudyPlanTable 
             items={plan.subItems} 
-            onSubItemChange={(newSubItems) => handleSubItemChange(plan.id, newSubItems)}
+            onSubItemChange={(newSubItems) => handleSubItemChange(plan.planid, newSubItems)}
           />
           </List.Item>
         )}

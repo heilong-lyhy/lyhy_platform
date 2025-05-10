@@ -41,11 +41,6 @@ const waitTime = (time: number = 100) => {
 
 
 
-interface TableProps {
-  items: SubItem[];
-  onSubItemChange: (newItems: SubItem[]) => void;
-}
-
 const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
@@ -131,7 +126,7 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
         <a
           key="editable"
           onClick={() => {
-            action?.startEditable?.(record.id);
+            action?.startEditable?.(record.subid);
           }}
         >
           编辑
@@ -139,7 +134,7 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
         <a
           key="delete"
           onClick={() => {
-            const newItems = items.filter((item) => item.id !== record.id);
+            const newItems = items.filter((item) => item.subid !== record.subid);
             onSubItemChange(newItems);
           }}
         >
@@ -182,7 +177,7 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
             position !== 'hidden'
               ? {
                   position: position as 'top',
-                  record: () => ({ id: (Math.random() * 1000000).toFixed(0) }),
+                  record: () => ({ subid: (Math.random() * 1000000).toFixed(0) }),
                 }
               : false
           }
