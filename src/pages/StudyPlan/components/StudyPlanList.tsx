@@ -206,7 +206,7 @@ const StudyPlanList: React.FC = () => {
             
             <div style={{ marginTop: 16 }}>
               <span style={{ color: '#1890ff' }}>当前任务: </span>
-              {plan.subItems.find(item => !item.completed)?.title || '暂无待办任务'}
+              {plan.subItems.find(item => !item.completed)?.subtitle || '暂无待办任务'}
             </div>
             
             {/* 嵌套子项表格 */}
