@@ -3,70 +3,31 @@ import { List, Button, Form, Input, Modal,DatePicker } from 'antd';
 import StudyPlanTable from './StudyPlanTable';
 import dayjs from 'dayjs';
 import './StudyPlanList.less';
+import StudyPlanCalendar from './StudyPlanCalendar';
 
 
 const { RangePicker } = DatePicker;
 // 主计划数据结构
 
-const StudyPlanList: React.FC = () => {
+// 由于 onmainplanitemChange 未被使用，根据提示移除该参数
+interface StudyPlanProps {
+  mainplanitem: MainPlan[];
+  onmainplanitemChange: (newMainPlans: MainPlan[]) => void;
+}
+
+const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemChange }) => {
   const handleSubItemChange = (planId: number, newSubItems: SubItem[]) => {
-    setMainPlans(mainPlans.map(plan => 
+    const newMainPlans = mainplanitem.map(plan => 
       plan.planid === planId ? { ...plan, subItems: newSubItems } : plan
-    ));
+    );
+    onmainplanitemChange(newMainPlans);
   };
-  // 示例主计划数据
-  const [mainPlans, setMainPlans] = React.useState<MainPlan[]>([
-    {
-      planid: 1,
-      plantitle: "前端学习计划",
-      description: "掌握React和TypeScript开发",
-      createdAt: dayjs(),
-      deadline: dayjs().add(30, 'day'),
-      subItems: [
-        {
-          subid: 624748504,
-          subtitle: '活动名称一',
-          description: '这个活动真好玩',
-          completed: false,
-          createdAt: 1590486176000,
-          updatedAt: 1590486176000,
-        },
-        {
-          subid: 624691229,
-          subtitle: '活动名称二',
-          description: '这个活动真好玩',
-          completed: false,
-          createdAt: 1590481162000,
-          updatedAt: 1590481162000,
-        },
-      ]
-    },
-    {
-      planid: 2,
-      plantitle: "前端学习计划2",
-      description: "掌握React和TypeScript开发",
-      createdAt: dayjs(),
-      deadline: dayjs().add(30, 'day'),
-      subItems: [
-        {
-          subid: 624748504,
-          subtitle: '活动名称一',
-          description: '这个活动真好玩',
-          completed: true,
-          createdAt: 1590486176000,
-          updatedAt: 1590486176000,
-        },
-        {
-          subid: 624691229,
-          subtitle: '活动名称二',
-          description: '这个活动真好玩',
-          completed: false,
-          createdAt: 1590481162000,
-          updatedAt: 1590481162000,
-        },
-      ]
-    }
-  ]);
+  // 使用父组件传递的mainplanitem作为当前数据
+  const [localMainPlans, setLocalMainPlans] = React.useState<MainPlan[]>(mainplanitem);
+  // 同步父组件props到本地状态
+  React.useEffect(() => {
+    setLocalMainPlans(mainplanitem);
+  }, [mainplanitem]);
   // const [mainPlans, setMainPlans] = React.useState<MainPlan[]>([
   //   {
   //     id: 1,
@@ -98,20 +59,30 @@ const StudyPlanList: React.FC = () => {
   
   const handleCreate = (values: any) => {
     const newPlan = {
-      planid: Math.max(...mainPlans.map(p => p.planid)) + 1,
+      planid: Math.max(...localMainPlans.map(p => p.planid)) + 1,
       plantitle: values.title,
       description: values.description,
       createdAt: dayjs(values.timeRange[0]),
       deadline: dayjs(values.timeRange[1]),
       subItems: []
     };
-    setMainPlans([...mainPlans, newPlan]);
+    setLocalMainPlans([...localMainPlans, newPlan]);
     setNewPlanVisible(false);
     form.resetFields();
   };
+
+  // const handleValueChange = (newValue: MainPlan[]) => {
+  //   setMainPlans(newValue);
+  // };
+  // const handleSubItemsChange = (newSubItems: SubItem[]) => {
+  //   setMainPlans(prev => ({
+  //     ...prev, // 保留其他字段
+  //     subItems: newSubItems // 仅更新 subItems
+  //   }));
+  // };
   
   const handleDelete = (planId: number) => {
-    setMainPlans(mainPlans.filter(p => p.planid !== planId));
+    setLocalMainPlans(localMainPlans.filter(p => p.planid !== planId));
   };
 
   return (
@@ -173,7 +144,7 @@ const StudyPlanList: React.FC = () => {
       </Modal>
       <List
         itemLayout="vertical"
-        dataSource={mainPlans}
+        dataSource={localMainPlans}
         renderItem={plan => (
           <List.Item
             key={plan.planid}
@@ -213,6 +184,7 @@ const StudyPlanList: React.FC = () => {
             <StudyPlanTable 
             items={plan.subItems} 
             onSubItemChange={(newSubItems) => handleSubItemChange(plan.planid, newSubItems)}
+            // onValueChange={handleSubItemsChange}
           />
           </List.Item>
         )}

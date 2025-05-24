@@ -13,12 +13,23 @@ interface MainPlan {
     subtitle?: string;
     description?: string;
     completed?: boolean;
-    createdAt?: number;
+    subdeadline?: number;
     updatedAt?: number;
     children?: SubItem[];
   }
 
+
+  interface StudyPlanProps {
+    mainplanitem: MainPlan[];
+    onmainplanitemChange: (mainplanitem: MainPlan[]) => void;
+  }
+
+  interface StudyPlanCalendarProps {
+    items: SubItem[];
+  };
+
   interface TableProps {
     items: SubItem[];
     onSubItemChange: (newItems: SubItem[]) => void;
+    // onValueChange: (newSubItems: SubItem[]) => void;
   }

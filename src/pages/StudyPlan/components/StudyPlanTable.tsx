@@ -7,6 +7,7 @@ import {
 } from '@ant-design/pro-components';
 import React, { useState } from 'react';
 import { Modal, Button } from 'antd';
+import dayjs from 'dayjs';
 
 
 
@@ -48,6 +49,10 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
   );
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   onValueChange();
+  // };
+
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -63,17 +68,16 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
   const columns: ProColumns<SubItem>[] = [
     {
       title: '计划名',
-      dataIndex: 'title',
-      tooltip: '只读，使用form.getFieldValue获取不到值',
+      dataIndex: 'subtitle',
+      // tooltip: '只读，使用form.getFieldValue获取不到值',
       formItemProps: (form, { rowIndex }) => {
         return {
           rules:
             rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
         };
       },
-      // 第一行不允许编辑
       editable: (text, record, index) => {
-        return index == 0;
+        return true;
       },
       width: '15%',
     },
@@ -84,7 +88,7 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
       dataIndex: 'completed',
       valueType: 'select',
       valueEnum: {
-        all: { text: '全部', status: 'Default' },
+        // all: { text: '全部', status: 'Default' },
         false: {
           text: '未解决',
           status: 'Error',
@@ -115,8 +119,10 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
     },
     {
       title: '预期结束时间',
-      dataIndex: 'createdAt',
+      dataIndex: 'subdeadline',
+// 根据错误提示，`valueType` 需要合适的类型，`date` 是 `ProFieldValueType` 中合适的类型
       valueType: 'date',
+      // render: (text) => dayjs(text).format('YYYY-MM-DD'),
     },
     {
       title: '操作',
@@ -165,7 +171,7 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
         ]}
       >
         <EditableProTable<SubItem>
-          rowKey="id"
+          rowKey="subid"
           headerTitle="在这编辑你的具体计划吧"
           maxLength={5}
           value={items}
