@@ -1,8 +1,9 @@
 import StudyPlanCalendar from './components/StudyPlanCalendar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import StudyPlanList from './components/StudyPlanList'; // 新增同级组件
 import './index.less';
+import { studyplan } from '@/services/StudyPlan/studyplan';
 // import type { MainPlan } from './typings.d.ts'; // 假设已定义类型
 
 const StudyPlan: React.FC = () => {
@@ -63,6 +64,39 @@ const StudyPlan: React.FC = () => {
   const handlemainplanitemChange = (newmainplan: MainPlan[]) => {
     setMainPlans(newmainplan);
   };
+
+  async function handleSubmit(values: any): Promise<any> {
+    try {
+      const res: any = await studyplan({ ...values });
+      const { id,nickname,foudlist } = res;
+      if(id !== undefined){
+        setMainPlans(res)
+      }
+      
+    } catch (error: any) {
+      // 如果失败替换为默认列表
+      console.log(error)
+      // setdata(defaultdata)
+    }
+  };
+
+  useEffect(() => {
+    handleSubmit(mainPlans); // 将 handleSubmit 放在 useEffect 中
+  }, []); // 空依赖数组确保只在挂载时运行一次
+  useEffect(() => {
+    // 当data.foudlist发生变化时，更新items
+    if (Array.isArray(mainPlans)) {
+
+      // setItems(convertfoudlistToListItems(data.foudlist|| []));
+
+    }
+  }, [mainPlans]); 
+
+  //以上内容完全是为了不报错进行的修改，实际功能没有实现
+
+
+
+
 
   return (
     <div className='main'>
