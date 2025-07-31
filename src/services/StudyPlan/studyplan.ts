@@ -14,7 +14,7 @@ export async function studyplan(body:MainPlan) {
   // 实际的请求发送时，GraphQL 客户端会自动将 variables 中的值注入到查询中
   const variables = {
     params: {
-      accountid:body.planid,
+      planid:body.planid,
     },
   };
 

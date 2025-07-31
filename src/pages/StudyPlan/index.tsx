@@ -68,6 +68,7 @@ const StudyPlan: React.FC = () => {
   async function handleSubmit(values: any): Promise<any> {
     try {
       const res: any = await studyplan({ ...values });
+      console.log(res)
       const { id,nickname,foudlist } = res;
       if(id !== undefined){
         setMainPlans(res)
