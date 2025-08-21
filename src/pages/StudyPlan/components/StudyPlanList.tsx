@@ -3,7 +3,7 @@ import { List, Button, Form, Input, Modal,DatePicker } from 'antd';
 import StudyPlanTable from './StudyPlanTable';
 import dayjs from 'dayjs';
 import './StudyPlanList.less';
-import StudyPlanCalendar from './StudyPlanCalendar';
+// import StudyPlanCalendar from './StudyPlanCalendar';
 
 
 const { RangePicker } = DatePicker;
@@ -127,16 +127,16 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
             label="时间范围"
             name="timeRange"
             rules={[
-          { required: true, message: '请选择时间范围' },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || value[0].isAfter(value[1])) {
-                return Promise.reject(new Error('结束时间必须晚于开始时间'));
-              }
-              return Promise.resolve();
+            { required: true, message: '请选择时间范围' },
+            {
+              validator(_, value) {
+                if (!value || value[0].isAfter(value[1])) {
+                  return Promise.reject(new Error('结束时间必须晚于开始时间'));
+                }
+                return Promise.resolve();
+              },
             },
-          }),
-        ]}
+          ]}
           >
             <RangePicker showTime />
           </Form.Item>
@@ -150,8 +150,8 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
             key={plan.planid}
             extra={
               <div style={{ minWidth: 120 }}>
-                <p>创建时间: {plan.createdAt.format('YYYY-MM-DD')}</p>
-                <p>截止时间: {plan.deadline.format('YYYY-MM-DD')}</p>
+                <p>创建时间: {dayjs(plan.createdAt).format('YYYY-MM-DD')}</p>
+                <p>截止时间: {dayjs(plan.deadline).format('YYYY-MM-DD')}</p>
                 {isEditMode && (
                   <Button
                     danger

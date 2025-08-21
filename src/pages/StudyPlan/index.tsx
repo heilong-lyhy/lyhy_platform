@@ -1,66 +1,86 @@
-import StudyPlanCalendar from './components/StudyPlanCalendar';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import StudyPlanList from './components/StudyPlanList'; // 新增同级组件
+import StudyPlanCalendar from './components/StudyPlanCalendar';
+import StudyPlanList from './components/StudyPlanList';
 import './index.less';
-import { studyplan } from '@/services/StudyPlan/studyplan';
-// import type { MainPlan } from './typings.d.ts'; // 假设已定义类型
+
+// // 定义与其他组件兼容的类型
+// interface SubItem {
+//   subid: number;
+//   subtitle: string;
+//   description: string;
+//   completed: boolean;
+//   subdeadline: number; // 保持与其他组件兼容的number类型
+//   updatedAt: number;
+// }
+
+// interface MainPlan {
+//   planid: number;
+//   plantitle: string;
+//   description: string;
+//   createdAt: number;
+//   deadline: number;
+//   subItems: SubItem[];
+// }
 
 const StudyPlan: React.FC = () => {
   // 状态提升：将主计划状态移至index组件管理
-  const [mainPlans, setMainPlans] = React.useState<MainPlan[]>([
-    {
-      planid: 1,
-      plantitle: "前端学习计划",
-      description: "掌握React和TypeScript开发",
-      createdAt: dayjs(),
-      deadline: dayjs().add(30, 'day'),
-      subItems: [
-        {
-          subid: 624748504,
-          subtitle: '活动名称一',
-          description: '这个活动真好玩',
-          completed: false,
-          subdeadline: 1590486176000,
-          updatedAt: 1590486176000,
-        },
-        {
-          subid: 624691229,
-          subtitle: '活动名称二',
-          description: '这个活动真好玩',
-          completed: false,
-          subdeadline: 1590481162000,
-          updatedAt: 1590481162000,
-        },
-      ]
-    },
-    {
-      planid: 2,
-      plantitle: "前端学习计划2",
-      description: "掌握React和TypeScript开发",
-      createdAt: dayjs(),
-      deadline: dayjs().add(30, 'day'),
-      subItems: [
-        {
-          subid: 624748504,
-          subtitle: '活动名称一',
-          description: '这个活动真好玩',
-          completed: true,
-          subdeadline: 1590486176000,
-          updatedAt: 1590486176000,
-        },
-        {
-          subid: 624691229,
-          subtitle: '活动名称二',
-          description: '这个活动真好玩',
-          completed: false,
-          subdeadline: 1590481162000,
-          updatedAt: 1590481162000,
-        },
-      ]
-    }
-  ]);
+  // 初始化主计划数据
+// 初始化主计划数据
+const [mainPlans, setMainPlans] = useState<MainPlan[]>([
+  {
+    planid: 1,
+    plantitle: "前端学习计划",
+    description: "掌握React和TypeScript开发",
+    createdAt: Date.now(),
+    deadline: dayjs().add(30, 'day').valueOf(),
+    subItems: [
+      {
+        subid: 1001,
+        subtitle: '学习React基础',
+        description: '掌握React组件、状态和属性',
+        completed: false,
+        subdeadline: dayjs().add(7, 'day').valueOf(),
+        updatedAt: Date.now(),
+      },
+      {
+        subid: 1002,
+        subtitle: '学习TypeScript',
+        description: '掌握TypeScript类型系统和接口',
+        completed: false,
+        subdeadline: dayjs().add(14, 'day').valueOf(),
+        updatedAt: Date.now(),
+      },
+    ]
+  },
+  {
+    planid: 2,
+    plantitle: "前端进阶计划",
+    description: "深入学习React高级特性",
+    createdAt: Date.now(),
+    deadline: dayjs().add(45, 'day').valueOf(),
+    subItems: [
+      {
+        subid: 2001,
+        subtitle: '学习React Hooks',
+        description: '掌握useState、useEffect等Hooks',
+        completed: true,
+        subdeadline: dayjs().subtract(3, 'day').valueOf(),
+        updatedAt: Date.now(),
+      },
+      {
+        subid: 2002,
+        subtitle: '学习Redux',
+        description: '掌握状态管理库Redux',
+        completed: false,
+        subdeadline: dayjs().add(21, 'day').valueOf(),
+        updatedAt: Date.now(),
+      },
+    ]
+  }
+]);
 
+  //以下内容完全是为了不报错进行的修改，实际功能没有实现
   const handlemainplanitemChange = (newmainplan: MainPlan[]) => {
     setMainPlans(newmainplan);
   };
@@ -95,6 +115,19 @@ const StudyPlan: React.FC = () => {
 
   //以上内容完全是为了不报错进行的修改，实际功能没有实现
 
+//     // 处理主计划项变化的回调函数
+// const handleMainPlanItemChange = (newMainPlans: MainPlan[]) => {
+//   setMainPlans(newMainPlans);
+// };
+
+// // 初始化获取数据
+// useEffect(() => {
+//   // 实际项目中可以在这里调用API获取数据
+//   // 这里使用模拟数据
+//   console.log('StudyPlan component initialized');
+// }, []);
+
+
 
 
 
@@ -110,8 +143,6 @@ const StudyPlan: React.FC = () => {
         {/* 列表组件：传递主计划数据和更新回调 */}
         <div className='studyplanlist'>
           <StudyPlanList 
-// 推测需要确保 StudyPlanList 组件能正确接收 mainplanitem 属性，可能需要定义组件的 Props 类型
-// 假设 StudyPlanList 组件已正确定义接收 mainplanitem 和 onmainplanitemChange 属性
             mainplanitem={mainPlans}
             onmainplanitemChange={handlemainplanitemChange} 
           />
