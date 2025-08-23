@@ -2,26 +2,9 @@ import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import StudyPlanCalendar from './components/StudyPlanCalendar';
 import StudyPlanList from './components/StudyPlanList';
+import { studyplan } from '@/services/StudyPlan/studyplan';
 import './index.less';
 
-// // 定义与其他组件兼容的类型
-// interface SubItem {
-//   subid: number;
-//   subtitle: string;
-//   description: string;
-//   completed: boolean;
-//   subdeadline: number; // 保持与其他组件兼容的number类型
-//   updatedAt: number;
-// }
-
-// interface MainPlan {
-//   planid: number;
-//   plantitle: string;
-//   description: string;
-//   createdAt: number;
-//   deadline: number;
-//   subItems: SubItem[];
-// }
 
 const StudyPlan: React.FC = () => {
   // 状态提升：将主计划状态移至index组件管理
@@ -32,8 +15,8 @@ const [mainPlans, setMainPlans] = useState<MainPlan[]>([
     planid: 1,
     plantitle: "前端学习计划",
     description: "掌握React和TypeScript开发",
-    createdAt: Date.now(),
-    deadline: dayjs().add(30, 'day').valueOf(),
+    createdAt: dayjs(),
+    deadline: dayjs().add(30, 'day'),
     subItems: [
       {
         subid: 1001,
@@ -57,8 +40,8 @@ const [mainPlans, setMainPlans] = useState<MainPlan[]>([
     planid: 2,
     plantitle: "前端进阶计划",
     description: "深入学习React高级特性",
-    createdAt: Date.now(),
-    deadline: dayjs().add(45, 'day').valueOf(),
+    createdAt: dayjs(),
+    deadline: dayjs().add(45, 'day'),
     subItems: [
       {
         subid: 2001,
@@ -88,8 +71,9 @@ const [mainPlans, setMainPlans] = useState<MainPlan[]>([
   async function handleSubmit(values: any): Promise<any> {
     try {
       const res: any = await studyplan({ ...values });
-      console.log(res)
       const { id,nickname,foudlist } = res;
+      console.log(res)
+      console.log(id,nickname,foudlist)
       if(id !== undefined){
         setMainPlans(res)
       }

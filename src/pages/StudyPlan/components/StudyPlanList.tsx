@@ -62,8 +62,8 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
       planid: Math.max(...localMainPlans.map(p => p.planid)) + 1,
       plantitle: values.title,
       description: values.description,
-      createdAt: dayjs(values.timeRange[0]),
-      deadline: dayjs(values.timeRange[1]),
+      createdAt: values.timeRange[0],
+      deadline: values.timeRange[1],
       subItems: []
     };
     setLocalMainPlans([...localMainPlans, newPlan]);
