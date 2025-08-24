@@ -4,13 +4,18 @@ import StudyPlanCalendar from './components/StudyPlanCalendar';
 import StudyPlanList from './components/StudyPlanList';
 import { studyplan } from '@/services/StudyPlan/studyplan';
 import './index.less';
+import { useModel } from '@umijs/max';
 
 
 const StudyPlan: React.FC = () => {
   // 状态提升：将主计划状态移至index组件管理
   // 初始化主计划数据
 // 初始化主计划数据
-const [mainPlans, setMainPlans] = useState<MainPlan[]>([
+  const { initialState } = useModel('@@initialState');
+  const currentUsername = initialState?.currentUser?.name;
+  console.log(currentUsername);
+
+  const [mainplans, setMainPlans] = useState<MainPlan[]>([
   {
     planid: 1,
     plantitle: "前端学习计划",
@@ -62,6 +67,8 @@ const [mainPlans, setMainPlans] = useState<MainPlan[]>([
     ]
   }
 ]);
+  const [data, setdata] = useState<PlanList>({username: currentUsername, mainplans:mainplans});
+//创建data，用于进行后端数据传输，包含用户名和主计划列表。但接下来的更新都将基于mainplans进行。
 
   //以下内容完全是为了不报错进行的修改，实际功能没有实现
   const handlemainplanitemChange = (newmainplan: MainPlan[]) => {
@@ -86,16 +93,16 @@ const [mainPlans, setMainPlans] = useState<MainPlan[]>([
   };
 
   useEffect(() => {
-    handleSubmit(mainPlans); // 将 handleSubmit 放在 useEffect 中
+    handleSubmit(mainplans); // 将 handleSubmit 放在 useEffect 中
   }, []); // 空依赖数组确保只在挂载时运行一次
   useEffect(() => {
     // 当data.foudlist发生变化时，更新items
-    if (Array.isArray(mainPlans)) {
+    if (Array.isArray(mainplans)) {
 
       // setItems(convertfoudlistToListItems(data.foudlist|| []));
 
     }
-  }, [mainPlans]); 
+  }, [mainplans]); 
 
   //以上内容完全是为了不报错进行的修改，实际功能没有实现
 
@@ -121,13 +128,13 @@ const [mainPlans, setMainPlans] = useState<MainPlan[]>([
       <div className='main-native'>
         {/* 日历组件：传递所有主计划的subItems合并数组 */}
         <div className='studyplancalendar'>
-          <StudyPlanCalendar items={mainPlans.flatMap(plan => plan.subItems)} />
+          <StudyPlanCalendar items={mainplans.flatMap(plan => plan.subItems)} />
         </div>
         
         {/* 列表组件：传递主计划数据和更新回调 */}
         <div className='studyplanlist'>
           <StudyPlanList 
-            mainplanitem={mainPlans}
+            mainplanitem={mainplans}
             onmainplanitemChange={handlemainplanitemChange} 
           />
         </div>

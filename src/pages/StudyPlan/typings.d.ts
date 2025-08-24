@@ -1,3 +1,9 @@
+interface PlanList {
+    username?: string;
+    mainplans?: MainPlan[];
+  }
+
+
 interface MainPlan {
     planid: number;
     plantitle: string;

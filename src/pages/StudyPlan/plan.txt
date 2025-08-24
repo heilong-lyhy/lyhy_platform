@@ -32,3 +32,10 @@ less和tsx的分离，当前大部分样式还嵌入在tsx文件中，后续应�
 未完成内容：
 StudyPlan的index.tsx文件中的内容仅做了大致框架的搭建，并未实际填充内容
 
+下一步内容：
+对index的studyplan请求进行优化，mainplan要根据用户name来进行查询，对user内容进行填充。
+查询格式变更为
+username: 123, mainplans:[1,2,3]
+以上mainplans的123分别为planid 1 2 3
+根据username获取一个储存planid的列表mainplans然后再次返回后端根据planid进行mainplan的二次查询
+
