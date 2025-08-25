@@ -66,7 +66,10 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
       deadline: values.timeRange[1],
       subItems: []
     };
-    setLocalMainPlans([...localMainPlans, newPlan]);
+    const updatedPlans = [...localMainPlans, newPlan];
+    setLocalMainPlans(updatedPlans);
+    // 新建计划后立即通知父组件更新
+    onmainplanitemChange(updatedPlans);
     setNewPlanVisible(false);
     form.resetFields();
   };

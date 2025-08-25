@@ -1,26 +1,26 @@
 import { request } from '@umijs/max';
 import { gql } from 'graphql-tag';
 
-export async function Studyplan(body: { planids: number[] }) {
+export async function Planlist(body:PlanList) {
   // 注意这是一个拼接字符串的实例,
   //.query 后是 gql 查询的的名字，在 schema 中定义
   // 这个输出展示了查询的结构，但不会直接把 loginName 和 loginPassword 的值替换进去。
   const query = gql`
-    query usergetStudyplan($params: MainPlanInput) {
-      usergetStudyplan(params: $params)
+    query usergetPlanlist($params: PlanList) {
+      usergetPlanlist(params: $params)
     }
   `;
 
   // 实际的请求发送时，GraphQL 客户端会自动将 variables 中的值注入到查询中
   const variables = {
     params: {
-      planids: body.planids,
+      username:body.username,
     },
   };
 
   const data = {
     query: query.loc?.source.body,
-    operationName: 'usergetStudyplan', // 操作名称，选填，查询文档有多个操作时必填
+    operationName: 'usergetPlanlist', // 操作名称，选填，查询文档有多个操作时必填
     variables, // 对象集合，选填
   };
 
@@ -37,7 +37,7 @@ export async function Studyplan(body: { planids: number[] }) {
       // if (response.success) {
       // 只有在账号登陆时，才会生成新的 token
       // 把 account 返回
-      return response.data.usergetStudyplan;
+      return response.data.usergetPlanlist;
       // }
       // throw new Error('无效的后台反馈，登录失败');
     })

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import StudyPlanCalendar from './components/StudyPlanCalendar';
 import StudyPlanList from './components/StudyPlanList';
-import { studyplan } from '@/services/StudyPlan/studyplan';
+import { Studyplan } from '@/services/StudyPlan/studyplan';
 import './index.less';
 import { useModel } from '@umijs/max';
+import { Planlist } from '@/services/StudyPlan/planlist';
 
 
 const StudyPlan: React.FC = () => {
@@ -70,37 +71,88 @@ const StudyPlan: React.FC = () => {
   const [data, setdata] = useState<PlanList>({username: currentUsername, mainplans:mainplans});
 //创建data，用于进行后端数据传输，包含用户名和主计划列表。但接下来的更新都将基于mainplans进行。
 
+  const handleplanlistChange = (newplanlist: []) => {
+    setdata({username: currentUsername, mainplans:newplanlist});
+  };
+  // async function handleplanlistSubmit(values: any): Promise<any> {
+  //   try {
+  //     const res: any = await Planlist({ ...values });
+  //     const { username,planlist } = res;
+  //     console.log(res)
+  //     console.log(username,planlist)
+  //     if(username !== undefined){
+  //       setdata(res)
+  //     }
+      
+  //   } catch (error: any) {
+  //     // 如果失败替换为默认列表
+  //     console.log(error)
+  //     // setdata(defaultdata)
+  //   }
+  // };
+  async function handleplanlistSubmit(username: string | undefined): Promise<void> {
+  try {
+    // 第一步：根据username查询planid列表
+    const planListRes: any = await Planlist({ username });
+    const { planlist: planIds } = planListRes;
+
+    if (Array.isArray(planIds) && planIds.length > 0) {
+      // 第二步：根据planid列表查询完整的mainplan数据
+      const mainPlansRes: any = await Studyplan({ planids: planIds });
+      setMainPlans(mainPlansRes);
+      setdata({ username, mainplans: mainPlansRes });
+    } else {
+      // 没有找到计划，设置为空数组
+      setMainPlans([]);
+      setdata({ username, mainplans: [] });
+    }
+  } catch (error: any) {
+    console.error('获取计划数据失败:', error);
+    // 错误处理逻辑
+  }
+}
+
+
   //以下内容完全是为了不报错进行的修改，实际功能没有实现
   const handlemainplanitemChange = (newmainplan: MainPlan[]) => {
     setMainPlans(newmainplan);
+    console.log(newmainplan)
   };
 
-  async function handleSubmit(values: any): Promise<any> {
-    try {
-      const res: any = await studyplan({ ...values });
-      const { id,nickname,foudlist } = res;
-      console.log(res)
-      console.log(id,nickname,foudlist)
-      if(id !== undefined){
-        setMainPlans(res)
-      }
+  // async function handleSubmit(values: any): Promise<any> {
+  //   try {
+  //     const res: any = await studyplan({ ...values });
+  //     const { id,nickname,foudlist } = res;
+  //     console.log(res)
+  //     console.log(id,nickname,foudlist)
+  //     if(id !== undefined){
+  //       setMainPlans(res)
+  //     }
       
-    } catch (error: any) {
-      // 如果失败替换为默认列表
-      console.log(error)
-      // setdata(defaultdata)
-    }
-  };
+  //   } catch (error: any) {
+  //     // 如果失败替换为默认列表
+  //     console.log(error)
+  //     // setdata(defaultdata)
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handleplanlistSubmit(currentUsername); // 将 handleSubmit 放在 useEffect 中
+  // }, []); // 空依赖数组确保只在挂载时运行一次
+  useEffect(() => {
+  if (currentUsername) {
+    handleplanlistSubmit(currentUsername);
+  }
+}, [currentUsername]);
 
   useEffect(() => {
-    handleSubmit(mainplans); // 将 handleSubmit 放在 useEffect 中
-  }, []); // 空依赖数组确保只在挂载时运行一次
+  setdata(prev => ({ ...prev, mainplans }));
+}, [mainplans]);
+
   useEffect(() => {
-    // 当data.foudlist发生变化时，更新items
+    // 当data.mainplans发生变化时，更新,但是目前不弄
     if (Array.isArray(mainplans)) {
-
       // setItems(convertfoudlistToListItems(data.foudlist|| []));
-
     }
   }, [mainplans]); 
 
