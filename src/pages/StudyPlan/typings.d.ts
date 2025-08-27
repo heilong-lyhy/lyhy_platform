@@ -1,6 +1,6 @@
 interface PlanList {
     username?: string;
-    mainplans?: MainPlan[];
+    mainplans?: number[];
   }
 
 

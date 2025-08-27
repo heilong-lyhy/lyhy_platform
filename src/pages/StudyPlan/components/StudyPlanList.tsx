@@ -16,18 +16,19 @@ interface StudyPlanProps {
 }
 
 const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemChange }) => {
-  const handleSubItemChange = (planId: number, newSubItems: SubItem[]) => {
-    const newMainPlans = mainplanitem.map(plan => 
-      plan.planid === planId ? { ...plan, subItems: newSubItems } : plan
-    );
-    onmainplanitemChange(newMainPlans);
-  };
   // 使用父组件传递的mainplanitem作为当前数据
   const [localMainPlans, setLocalMainPlans] = React.useState<MainPlan[]>(mainplanitem);
   // 同步父组件props到本地状态
   React.useEffect(() => {
     setLocalMainPlans(mainplanitem);
   }, [mainplanitem]);
+  
+  const handleSubItemChange = (planId: number, newSubItems: SubItem[]) => {
+    const newMainPlans = localMainPlans.map(plan => 
+      plan.planid === planId ? { ...plan, subItems: newSubItems } : plan
+    );
+    setLocalMainPlans(newMainPlans);
+  };
   // const [mainPlans, setMainPlans] = React.useState<MainPlan[]>([
   //   {
   //     id: 1,
@@ -68,8 +69,6 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
     };
     const updatedPlans = [...localMainPlans, newPlan];
     setLocalMainPlans(updatedPlans);
-    // 新建计划后立即通知父组件更新
-    onmainplanitemChange(updatedPlans);
     setNewPlanVisible(false);
     form.resetFields();
   };
@@ -93,9 +92,15 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
       <Button 
         type="primary" 
         style={{ marginBottom: 16 }}
-        onClick={() => setIsEditMode(!isEditMode)}
+        onClick={() => {
+          if (isEditMode) {
+            // 保存编辑时触发父组件更新
+            onmainplanitemChange(localMainPlans);
+          }
+          setIsEditMode(!isEditMode);
+        }}
       >
-        {isEditMode ? '退出编辑' : '编辑所有计划'}
+        {isEditMode ? '保存编辑' : '编辑所有计划'}
       </Button>
       {isEditMode && (
         <Button

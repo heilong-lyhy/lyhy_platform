@@ -5,7 +5,7 @@ import StudyPlanList from './components/StudyPlanList';
 import { Studyplan } from '@/services/StudyPlan/studyplan';
 import './index.less';
 import { useModel } from '@umijs/max';
-import { Planlist } from '@/services/StudyPlan/planlist';
+import { Planlist,SavePlanlist } from '@/services/StudyPlan/planlist';
 
 
 const StudyPlan: React.FC = () => {
@@ -68,12 +68,12 @@ const StudyPlan: React.FC = () => {
     ]
   }
 ]);
-  const [data, setdata] = useState<PlanList>({username: currentUsername, mainplans:mainplans});
+  const [data, setdata] = useState<PlanList>({username: currentUsername, mainplans:mainplans.map((item) => item.planid)});
 //创建data，用于进行后端数据传输，包含用户名和主计划列表。但接下来的更新都将基于mainplans进行。
 
-  const handleplanlistChange = (newplanlist: []) => {
-    setdata({username: currentUsername, mainplans:newplanlist});
-  };
+  // const handleplanlistChange = (newplanlist: number[]) => {
+  //   setdata({username: currentUsername, mainplans:newplanlist});
+  // };
   // async function handleplanlistSubmit(values: any): Promise<any> {
   //   try {
   //     const res: any = await Planlist({ ...values });
@@ -114,9 +114,23 @@ const StudyPlan: React.FC = () => {
 
 
   //以下内容完全是为了不报错进行的修改，实际功能没有实现
-  const handlemainplanitemChange = (newmainplan: MainPlan[]) => {
+  const handlemainplanitemChange = async(newmainplan: MainPlan[]) => {
     setMainPlans(newmainplan);
-    console.log(newmainplan)
+    setdata({username: currentUsername, mainplans: newmainplan.map(item => item.planid)});
+    console.log(data,mainplans)
+    try {
+    const res: any = await SavePlanlist({ username: currentUsername,planlist: newmainplan.map(item => item.planid) });
+    if (res === false) {
+      console.log("err");
+    } else {
+      console.log("ok");
+    }
+  }catch (error) {
+    console.log(error)
+  }
+
+
+
   };
 
   // async function handleSubmit(values: any): Promise<any> {
@@ -146,7 +160,7 @@ const StudyPlan: React.FC = () => {
 }, [currentUsername]);
 
   useEffect(() => {
-  setdata(prev => ({ ...prev, mainplans }));
+setdata(prev => ({ ...prev, mainplans: mainplans.map(item => item.planid) }));
 }, [mainplans]);
 
   useEffect(() => {

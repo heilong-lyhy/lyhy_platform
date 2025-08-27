@@ -48,48 +48,47 @@ export async function Studyplan(body: { planids: number[] }) {
 }
 
 
-// export async function resetFoudlist({id,foudlist,}: {id: number;foudlist: string;}){
-//   // 定义 GraphQL 变量
-//   const variables = {
-//     input: {
-//       id,
-//       foudlist,
-//     },
+export async function SaveStudyplan({planids}: {planids: number[]}){
+  // 定义 GraphQL 变量
+  const variables = {
+    input: {
+      planids,
+    },
 
-//     };
-// {
-//   // 定义 GraphQL Mutation
-//   const mutation = gql`
-//     mutation userResetFoudlist($input: ResetFoudlistInput!) {
-//       userResetFoudlist(input: $input)
-//     }
-//   `;
+    };
+{
+  // 定义 GraphQL Mutation
+  const mutation = gql`
+    mutation userResetFoudlist($input: ResetFoudlistInput!) {
+      userResetFoudlist(input: $input)
+    }
+  `;
 
-//   // 构造请求体
-//   const data = {
-//     query: mutation.loc?.source.body, // 获取 GraphQL 查询的 body
-//     operationName: 'userResetFoudlist', // 操作名称，选填，查询文档有多个操作时必填
-//      variables, // 变量集合
-//   }
+  // 构造请求体
+  const data = {
+    query: mutation.loc?.source.body, // 获取 GraphQL 查询的 body
+    operationName: 'userResetFoudlist', // 操作名称，选填，查询文档有多个操作时必填
+     variables, // 变量集合
+  }
 
-//   // console.log(data);
-//   // 使用 request 发送请求
-//   return request<API.ResponseData>('/graphql', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     data,
-//   })
-//     .then((response) => {
-//       if (response.success && response.data.userResetFoudlist) {
-//         return true; // 返回布尔值，表示重置成功
-//       }
-//       throw new Error(response.errorMessage || '列表保存失败');
-//     })
-//     .catch((error) => {
-//       console.error('Password reset failed:', error);
-//       throw error; // 返回错误信息
-//     });
-// }
-// }
+  // console.log(data);
+  // 使用 request 发送请求
+  return request<API.ResponseData>('/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data,
+  })
+    .then((response) => {
+      if (response.success && response.data.userResetFoudlist) {
+        return true; // 返回布尔值，表示重置成功
+      }
+      throw new Error(response.errorMessage || '列表保存失败');
+    })
+    .catch((error) => {
+      console.error('Password reset failed:', error);
+      throw error; // 返回错误信息
+    });
+}
+}
