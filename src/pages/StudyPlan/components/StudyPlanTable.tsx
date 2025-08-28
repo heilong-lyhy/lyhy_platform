@@ -1,15 +1,13 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import {
   EditableProTable,
-  ProCard,
-  ProFormField,
+  // ProCard,
+  // ProFormField,
   ProFormRadio,
 } from '@ant-design/pro-components';
+import { Button, Modal } from 'antd';
 import React, { useState } from 'react';
-import { Modal, Button } from 'antd';
-import dayjs from 'dayjs';
-
-
+// import dayjs from 'dayjs';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -19,34 +17,9 @@ const waitTime = (time: number = 100) => {
   });
 };
 
-// const defaultData: DataSourceType[] = [
-//   {
-//     id: 624748504,
-//     title: '活动名称一',
-//     readonly: '活动名称一',
-//     decs: '这个活动真好玩',
-//     state: 'open',
-//     created_at: 1590486176000,
-//     update_at: 1590486176000,
-//   },
-//   {
-//     id: 624691229,
-//     title: '活动名称二',
-//     readonly: '活动名称二',
-//     decs: '这个活动真好玩',
-//     state: 'closed',
-//     created_at: 1590481162000,
-//     update_at: 1590481162000,
-//   },
-// ];
-
-
-
 const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>(
-    'bottom',
-  );
+  const [position, setPosition] = useState<'top' | 'bottom' | 'hidden'>('bottom');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,11 +45,11 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
       // tooltip: '只读，使用form.getFieldValue获取不到值',
       formItemProps: (form, { rowIndex }) => {
         return {
-          rules:
-            rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
+          rules: rowIndex > 1 ? [{ required: true, message: '此项为必填项' }] : [],
         };
       },
-      editable: (text, record, index) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      editable: (_text, _record, _index) => {
         return true;
       },
       width: '15%',
@@ -120,7 +93,7 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
     {
       title: '预期结束时间',
       dataIndex: 'subdeadline',
-// 根据错误提示，`valueType` 需要合适的类型，`date` 是 `ProFieldValueType` 中合适的类型
+      // 根据错误提示，`valueType` 需要合适的类型，`date` 是 `ProFieldValueType` 中合适的类型
       valueType: 'date',
       // render: (text) => dayjs(text).format('YYYY-MM-DD'),
     },
