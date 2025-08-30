@@ -1,4 +1,4 @@
-﻿import type { RequestOptions } from '@@/plugin-request/request';
+// import type { RequestOptions } from '@@/plugin-request/request';
 import type { RequestConfig } from '@umijs/max';
 import { message, notification } from 'antd';
 
@@ -87,10 +87,17 @@ export const errorConfig: RequestConfig = {
 
   // 请求拦截器
   requestInterceptors: [
-    (config: RequestOptions) => {
-      // 拦截请求配置，进行个性化处理。
-      const url = config?.url?.concat('?token = 123');
-      return { ...config, url };
+    (config: any) => {
+      // 拦截请求配置，进行个性化处理
+      // 对于GraphQL请求，我们应该将token添加到请求头中而不是URL参数中
+      // 根据后端测试结果，使用'test_token'作为测试token
+      return {
+        ...config,
+        headers: {
+          ...config.headers,
+          token: 'test_token',
+        },
+      };
     },
   ],
 

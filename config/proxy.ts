@@ -15,14 +15,15 @@ export default {
     // localhost:8000/api/** -> http://localhost:7001/api/**
     '/api/': {
       // 要代理的地址
-      target: 'http://localhost:7001',
+      target: 'http://127.0.0.1:7001/',
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
+      pathRewrite: { '^/api': '' },
       changeOrigin: true,
     },
     // localhost:8000/graphql -> http://localhost:7001/graphql
     '/graphql': {
-      target: 'http://localhost:7001',
+      target: 'http://127.0.0.1:7001/',
       changeOrigin: true,
     },
   },
