@@ -14,7 +14,21 @@ export async function Planlist(body: PlanList) {
   const query = gql`
     query usergetPlanlist($params: PlanList) {
       usergetPlanlist(params: $params) {
-        mainplans
+        mainplans {
+          planid
+          plantitle
+          description
+          createdAt
+          deadline
+          subItems {
+            subid
+            subtitle
+            description
+            completed
+            subdeadline
+            updatedAt
+          }
+        }
       }
     }
   `;
@@ -45,7 +59,7 @@ export async function Planlist(body: PlanList) {
     .then((response) => {
       // 打印响应数据以便调试
       console.log('Planlist response:', response);
-      return response.data.usergetPlanlist;
+      return response.data.usergetPlanlist.mainplans || [];
     })
     .catch((error) => {
       console.error('Planlist request failed:', error);

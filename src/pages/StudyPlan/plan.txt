@@ -49,4 +49,4 @@ username: 123, mainplans:[1,2,3]
 
 
 下一步内容：
-针对index.tsx中当前的两个报错进行相关内容的修改
+对subitem的类型进行更改，有关事件的部分，应被处理的subdeadline未正常创建

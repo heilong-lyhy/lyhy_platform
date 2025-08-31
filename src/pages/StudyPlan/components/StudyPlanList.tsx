@@ -1,10 +1,8 @@
+import { Button, DatePicker, Form, Input, List, Modal } from 'antd';
 import React from 'react';
-import { List, Button, Form, Input, Modal,DatePicker } from 'antd';
-import StudyPlanTable from './StudyPlanTable';
-import dayjs from 'dayjs';
 import './StudyPlanList.less';
+import StudyPlanTable from './StudyPlanTable';
 // import StudyPlanCalendar from './StudyPlanCalendar';
-
 
 const { RangePicker } = DatePicker;
 // 主计划数据结构
@@ -22,10 +20,10 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
   React.useEffect(() => {
     setLocalMainPlans(mainplanitem);
   }, [mainplanitem]);
-  
+
   const handleSubItemChange = (planId: number, newSubItems: SubItem[]) => {
-    const newMainPlans = localMainPlans.map(plan => 
-      plan.planid === planId ? { ...plan, subItems: newSubItems } : plan
+    const newMainPlans = localMainPlans.map((plan) =>
+      plan.planid === planId ? { ...plan, subItems: newSubItems } : plan,
     );
     setLocalMainPlans(newMainPlans);
   };
@@ -57,15 +55,15 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [newPlanVisible, setNewPlanVisible] = React.useState(false);
   const [form] = Form.useForm();
-  
+
   const handleCreate = (values: any) => {
     const newPlan = {
-      planid: Math.max(...localMainPlans.map(p => p.planid)) + 1,
+      planid: Math.max(...localMainPlans.map((p) => p.planid)) + 1,
       plantitle: values.title,
       description: values.description,
       createdAt: values.timeRange[0],
       deadline: values.timeRange[1],
-      subItems: []
+      subItems: [],
     };
     const updatedPlans = [...localMainPlans, newPlan];
     setLocalMainPlans(updatedPlans);
@@ -82,15 +80,15 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
   //     subItems: newSubItems // 仅更新 subItems
   //   }));
   // };
-  
+
   const handleDelete = (planId: number) => {
-    setLocalMainPlans(localMainPlans.filter(p => p.planid !== planId));
+    setLocalMainPlans(localMainPlans.filter((p) => p.planid !== planId));
   };
 
   return (
     <div className="main-plan-list">
-      <Button 
-        type="primary" 
+      <Button
+        type="primary"
         style={{ marginBottom: 16 }}
         onClick={() => {
           if (isEditMode) {
@@ -103,48 +101,37 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
         {isEditMode ? '保存编辑' : '编辑所有计划'}
       </Button>
       {isEditMode && (
-        <Button
-          type="primary"
-          onClick={() => setNewPlanVisible(true)}
-        >
+        <Button type="primary" onClick={() => setNewPlanVisible(true)}>
           新建计划
         </Button>
       )}
       <Modal
-        title="新建学习计划" 
+        title="新建学习计划"
         visible={newPlanVisible}
         onCancel={() => setNewPlanVisible(false)}
         onOk={() => form.submit()}
       >
         <Form form={form} onFinish={handleCreate}>
-          <Form.Item
-            label="计划标题"
-            name="title"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="计划标题" name="title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            label="计划描述"
-            name="description"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="计划描述" name="description" rules={[{ required: true }]}>
             <Input.TextArea />
           </Form.Item>
-          <Form.Item 
+          <Form.Item
             label="时间范围"
             name="timeRange"
             rules={[
-            { required: true, message: '请选择时间范围' },
-            {
-              validator(_, value) {
-                if (!value || value[0].isAfter(value[1])) {
-                  return Promise.reject(new Error('结束时间必须晚于开始时间'));
-                }
-                return Promise.resolve();
+              { required: true, message: '请选择时间范围' },
+              {
+                validator(_, value) {
+                  if (!value || value[0].isAfter(value[1])) {
+                    return Promise.reject(new Error('结束时间必须晚于开始时间'));
+                  }
+                  return Promise.resolve();
+                },
               },
-            },
-          ]}
+            ]}
           >
             <RangePicker showTime />
           </Form.Item>
@@ -153,13 +140,13 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
       <List
         itemLayout="vertical"
         dataSource={localMainPlans}
-        renderItem={plan => (
+        renderItem={(plan) => (
           <List.Item
             key={plan.planid}
             extra={
               <div style={{ minWidth: 120 }}>
-                <p>创建时间: {dayjs(plan.createdAt).format('YYYY-MM-DD')}</p>
-                <p>截止时间: {dayjs(plan.deadline).format('YYYY-MM-DD')}</p>
+                <p>创建时间: {plan.createdAt.format('YYYY-MM-DD')}</p>
+                <p>截止时间: {plan.deadline.format('YYYY-MM-DD')}</p>
                 {isEditMode && (
                   <Button
                     danger
@@ -168,7 +155,7 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
                       Modal.confirm({
                         title: '确认删除',
                         content: '确定要删除该学习计划吗？',
-                        onOk: () => handleDelete(plan.planid)
+                        onOk: () => handleDelete(plan.planid),
                       });
                     }}
                   >
@@ -178,31 +165,24 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
               </div>
             }
           >
-            <List.Item.Meta
-              title={<h3>{plan.plantitle}</h3>}
-              description={plan.description}
-            />
-            
+            <List.Item.Meta title={<h3>{plan.plantitle}</h3>} description={plan.description} />
+
             <div style={{ marginTop: 16 }}>
               <span style={{ color: '#1890ff' }}>当前任务: </span>
-              {plan.subItems.find(item => !item.completed)?.subtitle || '暂无待办任务'}
+              {plan.subItems.find((item) => !item.completed)?.subtitle || '暂无待办任务'}
             </div>
-            
+
             {/* 嵌套子项表格 */}
-            <StudyPlanTable 
-            items={plan.subItems} 
-            onSubItemChange={(newSubItems) => handleSubItemChange(plan.planid, newSubItems)}
-            // onValueChange={handleSubItemsChange}
-          />
+            <StudyPlanTable
+              items={plan.subItems}
+              onSubItemChange={(newSubItems) => handleSubItemChange(plan.planid, newSubItems)}
+              // onValueChange={handleSubItemsChange}
+            />
           </List.Item>
         )}
       />
     </div>
   );
 };
-
-
-
-
 
 export default StudyPlanList;

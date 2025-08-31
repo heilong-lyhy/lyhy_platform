@@ -6,8 +6,8 @@ import {
   ProFormRadio,
 } from '@ant-design/pro-components';
 import { Button, Modal } from 'antd';
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
-// import dayjs from 'dayjs';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -93,9 +93,20 @@ const StudyPlanTable: React.FC<TableProps> = ({ items, onSubItemChange }) => {
     {
       title: '预期结束时间',
       dataIndex: 'subdeadline',
-      // 根据错误提示，`valueType` 需要合适的类型，`date` 是 `ProFieldValueType` 中合适的类型
       valueType: 'date',
-      // render: (text) => dayjs(text).format('YYYY-MM-DD'),
+      render: (dom: React.ReactNode, record: SubItem) => {
+        // 使用record中的subdeadline字段，确保类型正确
+        const text = record.subdeadline;
+        // 简洁的处理逻辑，主要处理dayjs.Dayjs类型
+        if (!text) return '';
+        try {
+          // 尝试将输入转换为dayjs对象并格式化
+          return dayjs(text).format('YYYY-MM-DD');
+        } catch (error) {
+          console.warn('日期格式无效:', text);
+          return '';
+        }
+      },
     },
     {
       title: '操作',

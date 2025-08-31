@@ -1,5 +1,4 @@
 import { Planlist, SavePlanlist } from '@/services/StudyPlan/planlist';
-import { Studyplan } from '@/services/StudyPlan/studyplan';
 import { useModel } from '@umijs/max';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
@@ -15,6 +14,7 @@ const StudyPlan: React.FC = () => {
   const currentUsername = initialState?.currentUser?.name;
   console.log(currentUsername);
 
+  // 显式定义setMainPlans的类型，确保它接受MainPlan[]类型
   const [mainplans, setMainPlans] = useState<MainPlan[]>([
     {
       planid: 1,
@@ -28,16 +28,16 @@ const StudyPlan: React.FC = () => {
           subtitle: '学习React基础',
           description: '掌握React组件、状态和属性',
           completed: false,
-          subdeadline: dayjs().add(7, 'day').valueOf(),
-          updatedAt: Date.now(),
+          subdeadline: dayjs().add(7, 'day'),
+          updatedAt: dayjs(),
         },
         {
           subid: 1002,
           subtitle: '学习TypeScript',
           description: '掌握TypeScript类型系统和接口',
           completed: false,
-          subdeadline: dayjs().add(14, 'day').valueOf(),
-          updatedAt: Date.now(),
+          subdeadline: dayjs().add(14, 'day'),
+          updatedAt: dayjs(),
         },
       ],
     },
@@ -53,23 +53,23 @@ const StudyPlan: React.FC = () => {
           subtitle: '学习React Hooks',
           description: '掌握useState、useEffect等Hooks',
           completed: true,
-          subdeadline: dayjs().subtract(3, 'day').valueOf(),
-          updatedAt: Date.now(),
+          subdeadline: dayjs().subtract(3, 'day'),
+          updatedAt: dayjs(),
         },
         {
           subid: 2002,
           subtitle: '学习Redux',
           description: '掌握状态管理库Redux',
           completed: false,
-          subdeadline: dayjs().add(21, 'day').valueOf(),
-          updatedAt: Date.now(),
+          subdeadline: dayjs().add(21, 'day'),
+          updatedAt: dayjs(),
         },
       ],
     },
   ]);
   const [data, setdata] = useState<PlanList>({
     username: currentUsername,
-    mainplans: mainplans.map((item) => item.planid),
+    mainplans: mainplans,
   });
   //创建data，用于进行后端数据传输，包含用户名和主计划列表。但接下来的更新都将基于mainplans进行。
 
@@ -92,18 +92,41 @@ const StudyPlan: React.FC = () => {
   //     // setdata(defaultdata)
   //   }
   // };
+  // 将各种格式的时间转换为dayjs对象
+  const convertTimeStringsToDayjs = (plans: any[]): MainPlan[] => {
+    return plans.map((plan) => {
+      // 转换主计划的时间字段 - 对任何非null/undefined的时间值都尝试转换
+      const convertedPlan: MainPlan = {
+        ...plan,
+        createdAt: plan.createdAt ? dayjs(plan.createdAt) : dayjs(),
+        deadline: plan.deadline ? dayjs(plan.deadline) : dayjs().add(30, 'day'),
+        subItems: [],
+      };
+
+      // 转换子计划的时间字段 - 改进处理逻辑，对任何非null/undefined的时间值都尝试转换
+      if (Array.isArray(plan.subItems)) {
+        convertedPlan.subItems = plan.subItems.map((subItem: any) => ({
+          ...subItem,
+          subdeadline: subItem.subdeadline ? dayjs(subItem.subdeadline) : undefined,
+          updatedAt: subItem.updatedAt ? dayjs(subItem.updatedAt) : dayjs(),
+        }));
+      }
+
+      return convertedPlan;
+    });
+  };
+
   async function handleplanlistSubmit(username: string | undefined): Promise<void> {
     try {
-      // 第一步：根据username查询planid列表
+      // 根据username查询完整的mainplan数据（不再需要二次查询）
       const planListRes: any = await Planlist({ username });
-      const { mainplans: planIds } = planListRes;
       console.log('这是planListRes', { planListRes });
 
-      if (Array.isArray(planIds) && planIds.length > 0) {
-        // 第二步：根据planid列表查询完整的mainplan数据
-        const mainPlansRes: any = await Studyplan({ planid: planIds });
-        setMainPlans(mainPlansRes);
-        setdata({ username, mainplans: mainPlansRes });
+      if (Array.isArray(planListRes) && planListRes.length > 0) {
+        // 将后端返回的字符串格式时间转换为dayjs对象
+        const convertedPlans = convertTimeStringsToDayjs(planListRes);
+        setMainPlans(convertedPlans);
+        setdata({ username, mainplans: convertedPlans });
       } else {
         // 没有找到计划，设置为空数组
         setMainPlans([]);
@@ -115,12 +138,13 @@ const StudyPlan: React.FC = () => {
     }
   }
 
-  //以下内容完全是为了不报错进行的修改，实际功能没有实现
+  //处理主计划项变化的回调函数
   const handlemainplanitemChange = async (newmainplan: MainPlan[]) => {
     setMainPlans(newmainplan);
-    setdata({ username: currentUsername, mainplans: newmainplan.map((item) => item.planid) });
+    setdata({ username: currentUsername, mainplans: newmainplan });
     console.log(data, mainplans);
     try {
+      // 修复类型错误：将MainPlan[]转换为number[]（planid数组）
       const res: any = await SavePlanlist({
         username: currentUsername,
         planlist: newmainplan.map((item) => item.planid),
@@ -161,12 +185,11 @@ const StudyPlan: React.FC = () => {
     }
   }, [currentUsername]);
 
-  useEffect(() => {
-    setdata((prev) => ({ ...prev, mainplans: mainplans.map((item) => item.planid) }));
-  }, [mainplans]);
+  // 移除错误的useEffect钩子，它违反了PlanList类型定义
+  // 主计划数据应该保持为MainPlan[]类型，不应该转换为number[]
 
   useEffect(() => {
-    // 当data.mainplans发生变化时，更新,但是目前不弄
+    // 当mainplans发生变化时，可以在这里执行其他操作
     if (Array.isArray(mainplans)) {
       // setItems(convertfoudlistToListItems(data.foudlist|| []));
     }
