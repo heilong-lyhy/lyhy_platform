@@ -12,7 +12,9 @@ const StudyPlan: React.FC = () => {
   // 初始化主计划数据
   const { initialState } = useModel('@@initialState');
   const currentUsername = initialState?.currentUser?.name;
-  console.log(currentUsername);
+  const currentUserid = initialState?.currentUser?.userid;
+
+  console.log(currentUsername, currentUserid);
 
   // 显式定义setMainPlans的类型，确保它接受MainPlan[]类型
   const [mainplans, setMainPlans] = useState<MainPlan[]>([
@@ -147,7 +149,8 @@ const StudyPlan: React.FC = () => {
       // 修复类型错误：将MainPlan[]转换为number[]（planid数组）
       const res: any = await SavePlanlist({
         username: currentUsername,
-        planlist: newmainplan.map((item) => item.planid),
+        userid: currentUserid ? Number(currentUserid) : undefined,
+        planData: newmainplan,
       });
       if (res === false) {
         console.log('保存失败');

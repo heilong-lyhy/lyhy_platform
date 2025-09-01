@@ -2,17 +2,13 @@ import { request } from '@umijs/max';
 import { gql } from 'graphql-tag';
 
 // 导入PlanList接口
-export interface PlanList {
-  username?: string;
-  mainplans?: number[];
-}
 
 export async function Planlist(body: PlanList) {
   // 注意这是一个拼接字符串的实例,
   //.query 后是 gql 查询的的名字，在 schema 中定义
   // 这个输出展示了查询的结构，但不会直接把 loginName 和 loginPassword 的值替换进去。
   const query = gql`
-    query usergetPlanlist($params: PlanList) {
+    query usergetPlanlist($params: PlanListInput!) {
       usergetPlanlist(params: $params) {
         mainplans {
           planid
@@ -59,7 +55,7 @@ export async function Planlist(body: PlanList) {
     .then((response) => {
       // 打印响应数据以便调试
       console.log('Planlist response:', response);
-      return response.data.usergetPlanlist.mainplans || [];
+      return response.data?.usergetPlanlist?.mainplans || [];
     })
     .catch((error) => {
       console.error('Planlist request failed:', error);
@@ -68,18 +64,45 @@ export async function Planlist(body: PlanList) {
     });
 }
 
+// 定义保存计划的接口
+
 export async function SavePlanlist({
   username,
-  planlist,
+  userid,
+  planData,
 }: {
   username?: string;
-  planlist?: number[];
+  userid?: number;
+  planData?: MainPlan[]; // 修改为数组类型
 }) {
+  // 如果提供了planData，则使用新的保存方式
+  if (!planData || !planData.length) {
+    throw new Error('缺少有效的计划数据');
+  }
+
+  // 在SavePlanlist函数内部，添加数据类型转换逻辑
+  // 构造请求体前，先处理planData中的类型转换
+  const processedPlanData = planData.map((plan) => ({
+    ...plan,
+    subItems: plan.subItems.map((item) => ({
+      subid: String(parseInt(item.subid as string, 10)),
+      subtitle: item.subtitle,
+      description: item.description,
+      completed:
+        typeof item.completed === 'string'
+          ? (item.completed as string).toLowerCase() === 'true'
+          : item.completed,
+      subdeadline: item.subdeadline,
+      // 移除updatedAt字段，因为SubItemInput类型中没有定义这个字段
+    })),
+  }));
+
   // 定义 GraphQL 变量
   const variables = {
     input: {
       username,
-      planlist,
+      userid,
+      planData: processedPlanData,
     },
   };
 
@@ -97,7 +120,9 @@ export async function SavePlanlist({
     variables, // 变量集合
   };
 
-  // console.log(data);
+  // 打印请求数据以便调试
+  console.log('SavePlanlist request data:', data);
+
   // 使用 request 发送请求
   return request<API.ResponseData>('/graphql', {
     method: 'POST',
@@ -107,10 +132,11 @@ export async function SavePlanlist({
     data,
   })
     .then((response) => {
-      if (response.success && response.data.userSavePlanlist) {
+      console.log('SavePlanlist response:', response);
+      if (response.data?.userSavePlanlist) {
         return true; // 返回布尔值，表示保存成功
       }
-      throw new Error(response.errorMessage || '列表保存失败');
+      throw new Error(response.errorMessage || '计划保存失败');
     })
     .catch((error) => {
       console.error('Planlist save failed:', error);
