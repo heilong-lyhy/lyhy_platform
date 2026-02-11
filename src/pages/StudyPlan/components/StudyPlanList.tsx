@@ -26,6 +26,7 @@ const StudyPlanList: React.FC<StudyPlanProps> = ({ mainplanitem, onmainplanitemC
       plan.planid === planId ? { ...plan, subItems: newSubItems } : plan,
     );
     setLocalMainPlans(newMainPlans);
+    onmainplanitemChange(newMainPlans);
   };
   // const [mainPlans, setMainPlans] = React.useState<MainPlan[]>([
   //   {
