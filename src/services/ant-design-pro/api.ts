@@ -1,35 +1,133 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
+import { gql } from 'graphql-tag';
 
-/** 获取当前的用户 GET /api/currentUser */
+/** 获取当前的用户 */
 export async function currentUser(options?: { [key: string]: any }) {
+  const query = gql`
+    query getCurrentUser {
+      getCurrentUser {
+        name
+        avatar
+        userid
+        email
+        signature
+        title
+        group
+        tags {
+          key
+          label
+        }
+        notifyCount
+        unreadCount
+        country
+        access
+        geographic {
+          province {
+            label
+            key
+          }
+          city {
+            label
+            key
+          }
+        }
+        address
+        phone
+      }
+    }
+  `;
+
+  const data = {
+    query: query.loc?.source.body,
+    operationName: 'getCurrentUser',
+  };
+
   return request<{
-    data: API.CurrentUser;
-  }>('/api/currentUser', {
-    method: 'GET',
-    ...(options || {}),
-  });
-}
-
-/** 退出登录接口 POST /api/login/outLogin */
-export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
-    method: 'POST',
-    ...(options || {}),
-  });
-}
-
-/** 登录接口 POST /api/login/account */
-export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
+    data: {
+      getCurrentUser: API.CurrentUser;
+    };
+  }>('/graphql', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
+    data,
+    ...(options || {}),
+  }).then((response) => {
+    console.log('currentUser API 完整响应:', response);
+    console.log('response.data:', response.data);
+    console.log('response.data?.getCurrentUser:', response.data?.getCurrentUser);
+    return {
+      data: response.data?.getCurrentUser,
+    };
+  });
+}
+
+/** 退出登录接口 */
+export async function outLogin(options?: { [key: string]: any }) {
+  const mutation = gql`
+    mutation logout {
+      logout
+    }
+  `;
+
+  const data = {
+    query: mutation.loc?.source.body,
+    operationName: 'logout',
+  };
+
+  return request<Record<string, any>>('/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data,
     ...(options || {}),
   });
+}
+
+/** 登录接口 */
+export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
+  const mutation = gql`
+    mutation login($input: LoginInput!) {
+      login(input: $input) {
+        status
+        type
+        currentAuthority
+        token
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      username: body.username,
+      password: body.password,
+      type: body.type,
+      autoLogin: body.autoLogin,
+    },
+  };
+
+  const data = {
+    query: mutation.loc?.source.body,
+    operationName: 'login',
+    variables,
+  };
+
+  return request<{
+    data: {
+      login: API.LoginResult;
+    };
+  }>('/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data,
+    ...(options || {}),
+  }).then((response) => response.data?.login || {});
 }
 
 /** 此处后端没有提供注释 GET /api/notices */

@@ -6,10 +6,9 @@ import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
+import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 import { errorConfig } from './requestErrorConfig';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import React from 'react';
-import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
@@ -23,12 +22,21 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log('Token 不存在，跳转到登录页');
+      history.push(loginPath);
+      return undefined;
+    }
+    console.log('App.tsx: 开始获取用户信息，token:', token.substring(0, 10) + '...');
     try {
       const msg = await queryCurrentUser({
         skipErrorHandler: true,
       });
+      console.log('App.tsx: 获取用户信息成功:', msg.data);
       return msg.data;
     } catch (error) {
+      console.error('App.tsx: 获取用户信息失败:', error);
       history.push(loginPath);
     }
     return undefined;

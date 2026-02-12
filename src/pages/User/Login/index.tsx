@@ -16,11 +16,11 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { FormattedMessage, history, SelectLang, useIntl, useModel, Helmet } from '@umijs/max';
+import { FormattedMessage, Helmet, history, SelectLang, useIntl, useModel } from '@umijs/max';
 import { Alert, message, Tabs } from 'antd';
-import Settings from '../../../../config/defaultSettings';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
+import Settings from '../../../../config/defaultSettings';
 
 const ActionIcons = () => {
   const langClassName = useEmotionCss(({ token }) => {
@@ -103,34 +103,48 @@ const Login: React.FC = () => {
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('Token 不存在，无法获取用户信息');
+      return;
+    }
+    console.log('开始获取用户信息，token:', token.substring(0, 10) + '...');
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
+      console.log('获取用户信息成功:', userInfo);
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
           currentUser: userInfo,
         }));
       });
+    } else {
+      console.error('获取用户信息失败');
     }
   };
 
   const handleSubmit = async (values: API.LoginParams) => {
     try {
-      // 登录
       const msg = await login({ ...values, type });
+      console.log('登录返回结果:', msg);
       if (msg.status === 'ok') {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
+        if (msg.token) {
+          localStorage.setItem('token', msg.token);
+          console.log('Token 已保存到 localStorage');
+        } else {
+          console.error('登录成功但未返回 token');
+        }
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
       }
       console.log(msg);
-      // 如果失败去设置用户错误信息
       setUserLoginState(msg);
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({

@@ -88,15 +88,22 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: any) => {
-      // 拦截请求配置，进行个性化处理
-      // 对于GraphQL请求，我们应该将token添加到请求头中而不是URL参数中
-      // 根据后端测试结果，使用'test_token'作为测试token
+      const token = localStorage.getItem('token');
+      const headers: any = {
+        ...config.headers,
+      };
+      if (token) {
+        headers.token = token;
+        console.log(
+          `请求拦截器: 添加 token 到请求头 ${config.url || config.method}`,
+          token.substring(0, 10) + '...',
+        );
+      } else {
+        console.log(`请求拦截器: 未找到 token，请求 ${config.url || config.method}`);
+      }
       return {
         ...config,
-        headers: {
-          ...config.headers,
-          token: 'test_token',
-        },
+        headers,
       };
     },
   ],
@@ -104,9 +111,12 @@ export const errorConfig: RequestConfig = {
   // 响应拦截器
   responseInterceptors: [
     (response) => {
-      // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as ResponseStructure;
-
+      console.log(
+        `响应拦截器: ${response.config.url || response.config.method}`,
+        response.status,
+        data,
+      );
       if (data?.success === false) {
         message.error('请求失败！');
       }

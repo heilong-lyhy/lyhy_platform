@@ -18,7 +18,7 @@ declare namespace API {
     // 字符串，方便后端故障排除：当前访问服务器的主机
     host?: string;
   };
-  
+
   type CurrentUser = {
     name?: string;
     avatar?: string;
@@ -44,6 +44,7 @@ declare namespace API {
     status?: string;
     type?: string;
     currentAuthority?: string;
+    token?: string;
   };
 
   type PageParams = {
