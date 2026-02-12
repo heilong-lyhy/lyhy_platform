@@ -103,7 +103,7 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
 
   const variables = {
     input: {
-      username: body.username,
+      account: body.account,
       password: body.password,
       type: body.type,
       autoLogin: body.autoLogin,
